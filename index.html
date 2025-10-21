@@ -54,16 +54,40 @@
       }
 
       .animal-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+      }
+
+      .image-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        background: #f8f9fa;
       }
 
       .animal-card img {
         width: 100%;
-        height: 300px;
-        border-radius: 12px;
+        height: 100%;
         object-fit: cover;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: opacity 0.3s ease;
+        opacity: 0;
+      }
+
+      .animal-card img.loaded {
+        opacity: 1;
+      }
+
+      .image-loading {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #6c757d;
+        font-size: 16px;
+        z-index: 1;
       }
 
       .animal-info {
@@ -369,7 +393,7 @@
           padding: 15px;
         }
 
-        .animal-card img {
+        .image-container {
           height: 200px;
         }
 
@@ -450,8 +474,19 @@
               <input
                 type="url"
                 id="animalImage"
-                placeholder="Enter image URL"
+                placeholder="Enter image URL (right-click image → Copy image address)"
               />
+              <small
+                style="
+                  color: #6c757d;
+                  font-size: 12px;
+                  margin-top: 5px;
+                  display: block;
+                "
+              >
+                💡 For Google Images: Right-click the image → "Copy image
+                address" (not "Copy link")
+              </small>
             </div>
           </form>
         </div>
@@ -548,6 +583,61 @@
         }
       }
 
+      // Image handling functions
+      function handleImageLoad(img) {
+        const loadingDiv = img.parentNode.querySelector(".image-loading");
+        if (loadingDiv) {
+          loadingDiv.style.display = "none";
+        }
+        img.classList.add("loaded");
+      }
+
+      function handleImageError(img, animalName) {
+        const loadingDiv = img.parentNode.querySelector(".image-loading");
+        if (loadingDiv) {
+          loadingDiv.style.display = "none";
+        }
+
+        // Try to use a different fallback or show a message
+        img.src = `https://via.placeholder.com/300x250?text=${encodeURIComponent(
+          animalName
+        )}`;
+        img.alt = `Image not available for ${animalName}`;
+        img.classList.add("loaded");
+
+        console.warn(`Failed to load image for ${animalName}. Using fallback.`);
+      }
+
+      // Function to process Google Images URLs
+      function processImageUrl(url) {
+        if (!url) return "https://via.placeholder.com/300x250?text=No+Image";
+
+        // If it's already a direct image URL, return as is
+        if (url.match(/\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i)) {
+          return url;
+        }
+
+        // If it's a Google Images search result page, try to extract the image URL
+        if (url.includes("google.com/imgres")) {
+          const urlParams = new URLSearchParams(url.split("?")[1]);
+          const imgUrl = urlParams.get("imgurl");
+          if (imgUrl) {
+            return decodeURIComponent(imgUrl);
+          }
+        }
+
+        // If it's a Google Images direct URL, return as is
+        if (
+          url.includes("googleusercontent.com") ||
+          url.includes("googleapis.com")
+        ) {
+          return url;
+        }
+
+        // For other URLs, return as is and let the error handling deal with it
+        return url;
+      }
+
       // Load and render animals from API
       async function loadAnimals() {
         try {
@@ -581,13 +671,19 @@
         ANIMALS_DATA.forEach((animal) => {
           const card = document.createElement("div");
           card.classList.add("animal-card");
+
+          // Process image URL to work better with Google Images
+          let imageUrl = processImageUrl(animal.image_url);
+
           card.innerHTML = `
-            <img src="${
-              animal.image_url ||
-              "https://via.placeholder.com/300x250?text=No+Image"
-            }" alt="${
-            animal.name
-          }" onerror="this.src='https://via.placeholder.com/300x250?text=Image+Not+Found'">
+            <div class="image-container">
+              <img src="${imageUrl}" 
+                   alt="${animal.name}" 
+                   loading="lazy"
+                   onerror="handleImageError(this, '${animal.name}')"
+                   onload="handleImageLoad(this)">
+              <div class="image-loading" style="display: none;">🔄 Loading...</div>
+            </div>
             <div class="animal-info">
               <strong>${animal.name}</strong><br>
               🌍 <b>Habitat:</b> ${animal.habitat}<br>
@@ -596,12 +692,8 @@
               🆔 <b>ID:</b> ${animal.id} 
             </div>
             <div class="actions">
-              <button class="edit-btn" onclick="editAnimal(${
-                animal.id
-              })">✏️ Edit</button>
-              <button class="delete-btn" onclick="deleteAnimal(${
-                animal.id
-              })">🗑️ Delete</button>
+              <button class="edit-btn" onclick="editAnimal(${animal.id})">✏️ Edit</button>
+              <button class="delete-btn" onclick="deleteAnimal(${animal.id})">🗑️ Delete</button>
             </div>
           `;
           container.appendChild(card);

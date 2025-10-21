@@ -47,6 +47,7 @@ app.post("/animals", (req, res) => {
   const habitat = req.body.habitat;
   const average_lifespan = req.body.average_lifespan;
   const continent = req.body.continent;
+  const image_url = req.body.image_url;
 
   if (!name || !habitat || !average_lifespan || !continent) {
     return res
@@ -70,6 +71,7 @@ app.post("/animals", (req, res) => {
     habitat: habitat,
     average_lifespan: average_lifespan,
     continent: continent,
+    image_url: image_url || null,
   };
 
   data.animals.push(newAnimal);
@@ -90,7 +92,7 @@ app.put("/animals/:id", (req, res) => {
   const data = readData();
   const animalsID = parseInt(req.params.id);
 
-  const { name, habitat, average_lifespan, continent } = req.body;
+  const { name, habitat, average_lifespan, continent, image_url } = req.body;
 
   const animalIndex = data.animals.findIndex(
     (animal) => animal.id === animalsID
@@ -114,6 +116,9 @@ app.put("/animals/:id", (req, res) => {
   if (continent) {
     data.animals[animalIndex].continent = continent;
   }
+  if (image_url !== undefined) {
+    data.animals[animalIndex].image_url = image_url;
+  }
 
   if (writeData(data)) {
     res.status(201).json({
@@ -124,7 +129,7 @@ app.put("/animals/:id", (req, res) => {
   } else {
     res
       .status(500)
-      .json({ success: false, message: "Error while Deleting Animal" });
+      .json({ success: false, message: "Error while Updating Animal" });
   }
 });
 

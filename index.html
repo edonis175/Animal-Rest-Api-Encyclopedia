@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animal Rest Api Encyclopedia</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: white;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      header {
+        background: linear-gradient(135deg, #036103 0%, #06632d 100%);
+        margin: 10px;
+        border-radius: 15px;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      #animal-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .animal-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .animal-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      }
+
+      .animal-card img {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        object-fit: cover;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .animal-info {
+        margin-top: 15px;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      .animal-info strong {
+        color: #2d3436;
+        font-size: 1.1em;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        gap: 10px;
+      }
+
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        cursor: pointer;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        flex: 1;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .edit-btn {
+        background: darkorange;
+      }
+
+      .delete-btn {
+        background: linear-gradient(135deg, #e63946, #dc2626);
+      }
+
+      .add-btn {
+        background: #036103;
+        margin: 20px auto;
+        display: block;
+        padding: 15px 30px;
+        font-size: 16px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      }
+
+      footer {
+        background: linear-gradient(135deg, #2d3436, #636e72);
+        color: white;
+        text-align: center;
+        padding: 15px;
+        margin-top: 50px;
+        border-radius: 15px 15px 0 0;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-content {
+        background: white;
+        margin: 5% auto;
+        padding: 0;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease;
+        overflow: hidden;
+      }
+
+      .delete-modal {
+        max-width: 400px;
+      }
+
+      .modal-header {
+        background: #036103;
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.5em;
+      }
+
+      .close {
+        color: white;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: opacity 0.3s ease;
+      }
+
+      .close:hover {
+        opacity: 0.7;
+      }
+
+      .modal-body {
+        padding: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #036103;
+        box-shadow: 0 0 0 3px rgba(3, 97, 3, 0.1);
+      }
+
+      .modal-footer {
+        padding: 20px 30px;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+      }
+
+      .btn-cancel,
+      .btn-save,
+      .btn-delete {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-cancel {
+        background: #6c757d;
+        color: white;
+      }
+
+      .btn-cancel:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+      }
+
+      .btn-save {
+        background: #036103;
+        color: white;
+      }
+
+      .btn-save:hover {
+        background: linear-gradient(135deg, #218838, #1e7e34);
+        transform: translateY(-1px) ease;
+      }
+
+      .btn-delete {
+        background: linear-gradient(135deg, #e63946, #dc2626);
+        color: white;
+      }
+
+      .btn-delete:hover {
+        background: linear-gradient(135deg, #d32f2f, #c62828);
+        transform: translateY(-2px);
+      }
+
+      .delete-warning {
+        color: #e90c1f;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .loading {
+        text-align: center;
+        color: #666;
+        font-size: 18px;
+        padding: 50px;
+      }
+
+      .error-message {
+        background: linear-gradient(135deg, #e63946, #dc2626);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        margin: 20px;
+        font-weight: 600;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2em;
+        }
+
+        #animal-container {
+          grid-template-columns: 1fr;
+          padding: 20px;
+          gap: 20px;
+        }
+
+        .animal-card {
+          padding: 15px;
+        }
+
+        .modal-content {
+          width: 95%;
+          margin: 10% auto;
+        }
+
+        .modal-body {
+          padding: 20px;
+        }
+
+        .modal-footer {
+          padding: 15px 20px;
+          flex-direction: column;
+        }
+
+        .btn-cancel,
+        .btn-save,
+        .btn-delete {
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .actions {
+          flex-direction: column;
+        }
+
+        button {
+          margin-bottom: 10px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          margin: 5px;
+          padding: 15px;
+        }
+
+        h1 {
+          font-size: 1.8em;
+        }
+
+        #animal-container {
+          padding: 15px;
+        }
+
+        .animal-card img {
+          height: 200px;
+        }
+
+        .modal-content {
+          width: 98%;
+          margin: 5% auto;
+        }
+
+        .modal-header {
+          padding: 15px;
+        }
+
+        .modal-body {
+          padding: 15px;
+        }
+
+        .modal-footer {
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🐾 Animal Encyclopedia</h1>
+    </header>
+
+    <button class="add-btn" id="addAnimalBtn">➕ Add New Animal</button>
+
+    <!-- Add/Edit Animal Modal -->
+    <div id="animalModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Add New Animal</h3>
+          <span class="close" id="closeModal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <form id="animalForm">
+            <div class="form-group">
+              <label for="animalName">Animal Name *</label>
+              <input
+                type="text"
+                id="animalName"
+                placeholder="Enter animal name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="animalHabitat">Habitat *</label>
+              <input
+                type="text"
+                id="animalHabitat"
+                placeholder="Enter habitat"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="animalLifespan">Average Lifespan (years) *</label>
+              <input
+                type="number"
+                id="animalLifespan"
+                placeholder="Enter lifespan in years"
+                required
+                min="0"
+              />
+            </div>
+            <div class="form-group">
+              <label for="animalContinent">Continent *</label>
+              <input
+                type="text"
+                id="animalContinent"
+                placeholder="Enter continent"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="animalImage">Image URL</label>
+              <input
+                type="url"
+                id="animalImage"
+                placeholder="Enter image URL"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="cancelBtn">
+            Cancel
+          </button>
+          <button type="button" class="btn-save" id="saveAnimalBtn">
+            Save Animal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+      <div class="modal-content delete-modal">
+        <div class="modal-header">
+          <h3>Delete Animal</h3>
+          <span class="close" id="closeDeleteModal">&times;</span>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this animal?</p>
+          <p class="delete-warning">⚠️ This action cannot be undone!</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="cancelDeleteBtn">
+            Cancel
+          </button>
+          <button type="button" class="btn-delete" id="confirmDeleteBtn">
+            Delete Animal
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <main id="animal-container"></main>
+
+    <script>
+      const API_URL = "http://localhost:3000/animals";
+      const container = document.getElementById("animal-container");
+      const addAnimalBtn = document.getElementById("addAnimalBtn");
+      const animalModal = document.getElementById("animalModal");
+      const deleteModal = document.getElementById("deleteModal");
+      const saveAnimalBtn = document.getElementById("saveAnimalBtn");
+      const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+      let editMode = false;
+      let editId = null;
+      let deleteId = null;
+
+      // Helper functions for validation
+      function clearErrorMessages() {
+        const errorElements = document.querySelectorAll(".field-error");
+        errorElements.forEach((element) => element.remove());
+
+        const inputs = document.querySelectorAll("#animalForm input");
+        inputs.forEach((input) => {
+          input.style.borderColor = "#e9ecef";
+        });
+      }
+
+      function showFieldError(fieldId, message) {
+        const field = document.getElementById(fieldId);
+        field.style.borderColor = "#e63946";
+
+        // Remove existing error message
+        const existingError = field.parentNode.querySelector(".field-error");
+        if (existingError) {
+          existingError.remove();
+        }
+
+        // Add new error message
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "field-error";
+        errorDiv.style.color = "#e63946";
+        errorDiv.style.fontSize = "14px";
+        errorDiv.style.marginTop = "5px";
+        errorDiv.textContent = message;
+
+        field.parentNode.appendChild(errorDiv);
+      }
+
+      function isValidUrl(string) {
+        try {
+          new URL(string);
+          return true;
+        } catch (_) {
+          return false;
+        }
+      }
+
+      // Fetch and render animals
+      async function loadAnimals() {
+        container.innerHTML =
+          '<div class="loading">🔄 Loading animals... Please wait</div>';
+        try {
+          const res = await fetch(API_URL);
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
+          const data = await res.json();
+
+          if (!data || !Array.isArray(data)) {
+            throw new Error("Invalid data format received");
+          }
+
+          container.innerHTML = "";
+
+          if (data.length === 0) {
+            container.innerHTML =
+              '<div class="loading">📝 No animals found. Add some animals to get started!</div>';
+            return;
+          }
+
+          data.forEach((animal) => {
+            const card = document.createElement("div");
+            card.classList.add("animal-card");
+            card.innerHTML = `
+            <img src="${
+              animal.image_url ||
+              "https://via.placeholder.com/300x250?text=No+Image"
+            }" alt="${
+              animal.name
+            }" onerror="this.src='https://via.placeholder.com/300x250?text=Image+Not+Found'">
+            <div class="animal-info">
+              <strong>${animal.name}</strong><br>
+              🌍 <b>Habitat:</b> ${animal.habitat}<br>
+              ⏳ <b>Lifespan:</b> ${animal.average_lifespan} years<br>
+              🌎 <b>Continent:</b> ${animal.continent}<br>
+              🆔 <b>ID:</b> ${animal.id} 
+            </div>
+            <div class="actions">
+              <button class="edit-btn" onclick="editAnimal(${
+                animal.id
+              })">✏️ Edit</button>
+              <button class="delete-btn" onclick="deleteAnimal(${
+                animal.id
+              })">🗑️ Delete</button>
+            </div>
+          `;
+            container.appendChild(card);
+          });
+        } catch (err) {
+          console.error("Error loading animals:", err);
+          container.innerHTML = `
+            <div class="error-message">
+              ❌ Failed to load animal data.<br>
+              <small>Error: ${err.message}</small><br>
+              <button onclick="loadAnimals()" style="margin-top: 10px; padding: 8px 16px; background: white; color: #e63946; border: none; border-radius: 5px; cursor: pointer;">
+                🔄 Try Again
+              </button>
+            </div>
+          `;
+        }
+      }
+
+      // Modal event listeners
+      addAnimalBtn.addEventListener("click", () => {
+        editMode = false;
+        editId = null;
+        document.getElementById("modal-title").textContent =
+          "➕ Add New Animal";
+        document.getElementById("animalForm").reset();
+        clearErrorMessages();
+        animalModal.style.display = "block";
+      });
+
+      // Close modal events
+      document
+        .getElementById("closeModal")
+        .addEventListener("click", closeAnimalModal);
+      document
+        .getElementById("cancelBtn")
+        .addEventListener("click", closeAnimalModal);
+      document
+        .getElementById("closeDeleteModal")
+        .addEventListener("click", closeDeleteModal);
+      document
+        .getElementById("cancelDeleteBtn")
+        .addEventListener("click", closeDeleteModal);
+
+      // Close modals when clicking outside
+      window.addEventListener("click", (event) => {
+        if (event.target === animalModal) {
+          closeAnimalModal();
+        }
+        if (event.target === deleteModal) {
+          closeDeleteModal();
+        }
+      });
+
+      function closeAnimalModal() {
+        animalModal.style.display = "none";
+        document.getElementById("animalForm").reset();
+      }
+
+      function closeDeleteModal() {
+        deleteModal.style.display = "none";
+        deleteId = null;
+      }
+
+      // Real-time validation
+      document
+        .getElementById("animalName")
+        .addEventListener("blur", function () {
+          if (!this.value.trim()) {
+            showFieldError("animalName", "Animal name is required!");
+          } else {
+            clearFieldError("animalName");
+          }
+        });
+
+      document
+        .getElementById("animalHabitat")
+        .addEventListener("blur", function () {
+          if (!this.value.trim()) {
+            showFieldError("animalHabitat", "Habitat is required!");
+          } else {
+            clearFieldError("animalHabitat");
+          }
+        });
+
+      document
+        .getElementById("animalLifespan")
+        .addEventListener("blur", function () {
+          const value = this.value.trim();
+          if (!value) {
+            showFieldError("animalLifespan", "Average lifespan is required!");
+          } else if (isNaN(value) || parseFloat(value) < 0) {
+            showFieldError(
+              "animalLifespan",
+              "Please enter a valid lifespan (positive number)!"
+            );
+          } else {
+            clearFieldError("animalLifespan");
+          }
+        });
+
+      document
+        .getElementById("animalContinent")
+        .addEventListener("blur", function () {
+          if (!this.value.trim()) {
+            showFieldError("animalContinent", "Continent is required!");
+          } else {
+            clearFieldError("animalContinent");
+          }
+        });
+
+      document
+        .getElementById("animalImage")
+        .addEventListener("blur", function () {
+          const value = this.value.trim();
+          if (value && !isValidUrl(value)) {
+            showFieldError("animalImage", "Please enter a valid image URL!");
+          } else {
+            clearFieldError("animalImage");
+          }
+        });
+
+      function clearFieldError(fieldId) {
+        const field = document.getElementById(fieldId);
+        field.style.borderColor = "#e9ecef";
+        const existingError = field.parentNode.querySelector(".field-error");
+        if (existingError) {
+          existingError.remove();
+        }
+      }
+
+      // Add or Edit animal
+      saveAnimalBtn.addEventListener("click", async () => {
+        const name = document.getElementById("animalName").value.trim();
+        const habitat = document.getElementById("animalHabitat").value.trim();
+        const average_lifespan = document
+          .getElementById("animalLifespan")
+          .value.trim();
+        const continent = document
+          .getElementById("animalContinent")
+          .value.trim();
+        const image_url = document.getElementById("animalImage").value.trim();
+
+        // Clear previous error messages
+        clearErrorMessages();
+
+        // Validation
+        let hasErrors = false;
+
+        if (!name) {
+          showFieldError("animalName", "Animal name is required!");
+          hasErrors = true;
+        }
+
+        if (!habitat) {
+          showFieldError("animalHabitat", "Habitat is required!");
+          hasErrors = true;
+        }
+
+        if (!average_lifespan) {
+          showFieldError("animalLifespan", "Average lifespan is required!");
+          hasErrors = true;
+        } else if (
+          isNaN(average_lifespan) ||
+          parseFloat(average_lifespan) < 0
+        ) {
+          showFieldError(
+            "animalLifespan",
+            "Please enter a valid lifespan (positive number)!"
+          );
+          hasErrors = true;
+        }
+
+        if (!continent) {
+          showFieldError("animalContinent", "Continent is required!");
+          hasErrors = true;
+        }
+
+        if (image_url && !isValidUrl(image_url)) {
+          showFieldError("animalImage", "Please enter a valid image URL!");
+          hasErrors = true;
+        }
+
+        if (hasErrors) {
+          return;
+        }
+
+        const animal = {
+          name,
+          habitat,
+          average_lifespan: parseInt(average_lifespan),
+          continent,
+          image_url: image_url || null,
+        };
+
+        try {
+          saveAnimalBtn.textContent = "💾 Saving...";
+          saveAnimalBtn.disabled = true;
+
+          let response;
+          if (editMode) {
+            // PUT request
+            response = await fetch(`${API_URL}/${editId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(animal),
+            });
+          } else {
+            // POST request
+            response = await fetch(API_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(animal),
+            });
+          }
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.message || `HTTP error! status: ${response.status}`
+            );
+          }
+
+          const result = await response.json();
+
+          // Show success message
+          const successMsg = editMode
+            ? "Animal updated successfully! 🎉"
+            : "Animal added successfully! 🎉";
+          alert(successMsg);
+
+          editMode = false;
+          editId = null;
+          closeAnimalModal();
+          loadAnimals();
+        } catch (error) {
+          console.error("Error saving animal:", error);
+          alert(`Error: ${error.message}`);
+        } finally {
+          saveAnimalBtn.textContent = "Save Animal";
+          saveAnimalBtn.disabled = false;
+        }
+      });
+
+      // Edit animal
+      window.editAnimal = async (id) => {
+        try {
+          editMode = true;
+          editId = id;
+          document.getElementById("modal-title").textContent = "✏️ Edit Animal";
+          clearErrorMessages();
+
+          const res = await fetch(`${API_URL}/${id}`);
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
+          const data = await res.json();
+
+          if (!data.success) {
+            throw new Error(data.message || "Failed to fetch animal data");
+          }
+
+          document.getElementById("animalName").value = data.data.name;
+          document.getElementById("animalHabitat").value = data.data.habitat;
+          document.getElementById("animalLifespan").value =
+            data.data.average_lifespan;
+          document.getElementById("animalContinent").value =
+            data.data.continent;
+          document.getElementById("animalImage").value =
+            data.data.image_url || "";
+
+          animalModal.style.display = "block";
+        } catch (error) {
+          console.error("Error loading animal for edit:", error);
+          alert(`Error loading animal: ${error.message}`);
+        }
+      };
+
+      // Delete animal
+      window.deleteAnimal = async (id) => {
+        deleteId = id;
+        deleteModal.style.display = "block";
+      };
+
+      // Confirm delete
+      confirmDeleteBtn.addEventListener("click", async () => {
+        if (!deleteId) return;
+
+        try {
+          const res = await fetch(`${API_URL}/${deleteId}`, {
+            method: "DELETE",
+          });
+
+          if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(
+              errorData.message || `HTTP error! status: ${res.status}`
+            );
+          }
+
+          const result = await res.json();
+
+          if (result.success) {
+            alert("Animal deleted successfully! 🗑️");
+            closeDeleteModal();
+            loadAnimals();
+          } else {
+            throw new Error(result.message || "Failed to delete animal");
+          }
+        } catch (error) {
+          console.error("Error deleting animal:", error);
+          alert(`Error deleting animal: ${error.message}`);
+        }
+      });
+
+      // Load animals when page opens
+      loadAnimals();
+    </script>
+  </body>
+</html>

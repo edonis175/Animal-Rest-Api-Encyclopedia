@@ -1,0 +1,114 @@
+{
+  "animals": [
+    {
+      "id": 1,
+      "name": "Elephant",
+      "scientific_name": "Loxodonta africana",
+      "habitat": "Savannah",
+      "diet": "Herbivore",
+      "average_lifespan": 75,
+      "continent": "Africa",
+      "conservation_status": "Vulnerable",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Tiger",
+      "scientific_name": "Panthera tigris tigris",
+      "habitat": "Rainforest",
+      "diet": "Carnivore",
+      "average_lifespan": 15,
+      "continent": "Asia",
+      "conservation_status": "Endangered",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg/500px-Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Koala",
+      "scientific_name": "Phascolarctos cinereus",
+      "habitat": "Eucalyptus Forest",
+      "diet": "Herbivore",
+      "average_lifespan": 13,
+      "continent": "Australia",
+      "conservation_status": "Vulnerable",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Eagle",
+      "scientific_name": "Haliaeetus leucocephalus",
+      "habitat": "Forests near rivers and lakes",
+      "diet": "Carnivore",
+      "average_lifespan": 20,
+      "continent": "North America",
+      "conservation_status": "Least Concern",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Pithecophaga_jefferyi.jpg/250px-Pithecophaga_jefferyi.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Panda",
+      "scientific_name": "Ailuropoda melanoleuca",
+      "habitat": "Bamboo Forests",
+      "diet": "Herbivore",
+      "average_lifespan": 20,
+      "continent": "Asia",
+      "conservation_status": "Vulnerable",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG"
+    },
+    {
+      "id": 6,
+      "name": "Sea Ice ",
+      "scientific_name": "Sea ice",
+      "habitat": "Tundra",
+      "diet": "Omnivore",
+      "average_lifespan": 10,
+      "continent": "Arctic Regions",
+      "conservation_status": "Least Concern",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ommatophoca_rossii_%28Ross_Seal%29%2C_off_Wilkes_Land%2C_Antarctica_1.jpg/250px-Ommatophoca_rossii_%28Ross_Seal%29%2C_off_Wilkes_Land%2C_Antarctica_1.jpg"
+    },
+    {
+      "id": 7,
+      "name": "Penguin",
+      "scientific_name": "Aptenodytes forsteri",
+      "habitat": "Antarctic Ice",
+      "diet": "Carnivore",
+      "average_lifespan": 20,
+      "continent": "Antarctica",
+      "conservation_status": "Near Threatened",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg/250px-Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg"
+    },
+    {
+      "id": 8,
+      "name": "Kangaroo",
+      "scientific_name": "Macropus rufus",
+      "habitat": "Desert and Grassland",
+      "diet": "Herbivore",
+      "average_lifespan": 22,
+      "continent": "Australia",
+      "conservation_status": "Least Concern",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kangaroo_Australia_01_11_2008_-_retouch.JPG/250px-Kangaroo_Australia_01_11_2008_-_retouch.JPG"
+    },
+    {
+      "id": 9,
+      "name": "Turtle",
+      "scientific_name": "Chelonia mydas",
+      "habitat": "Tropical and Subtropical Oceans",
+      "diet": "Herbivore",
+      "average_lifespan": 80,
+      "continent": "Global (Oceans)",
+      "conservation_status": "Endangered",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Turtle_golfina_escobilla_Oaxaca_Mexico_Claudio_Giovenzana_2010.jpg/250px-Turtle_golfina_escobilla_Oaxaca_Mexico_Claudio_Giovenzana_2010.jpg"
+    },
+    {
+      "id": 10,
+      "name": "Leopard",
+      "scientific_name": "Panthera uncia",
+      "habitat": "Mountain Ranges",
+      "diet": "Carnivore",
+      "average_lifespan": 18,
+      "continent": "Asia",
+      "conservation_status": "Vulnerable",
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/African_leopard_male_%28cropped%29.jpg/250px-African_leopard_male_%28cropped%29.jpg"
+    }
+  ]
+}

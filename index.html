@@ -491,7 +491,129 @@
     <main id="animal-container"></main>
 
     <script>
-      const API_URL = "http://localhost:3000/animals";
+      // Static data - no API calls needed for GitHub Pages
+      const ANIMALS_DATA = [
+        {
+          id: 1,
+          name: "Elephant",
+          scientific_name: "Loxodonta africana",
+          habitat: "Savannah",
+          diet: "Herbivore",
+          average_lifespan: 75,
+          continent: "Africa",
+          conservation_status: "Vulnerable",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg",
+        },
+        {
+          id: 2,
+          name: "Tiger",
+          scientific_name: "Panthera tigris tigris",
+          habitat: "Rainforest",
+          diet: "Carnivore",
+          average_lifespan: 15,
+          continent: "Asia",
+          conservation_status: "Endangered",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg/500px-Bengal_tiger_%28Panthera_tigris_tigris%29_female_3_crop.jpg",
+        },
+        {
+          id: 3,
+          name: "Koala",
+          scientific_name: "Phascolarctos cinereus",
+          habitat: "Eucalyptus Forest",
+          diet: "Herbivore",
+          average_lifespan: 13,
+          continent: "Australia",
+          conservation_status: "Vulnerable",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg",
+        },
+        {
+          id: 4,
+          name: "Eagle",
+          scientific_name: "Haliaeetus leucocephalus",
+          habitat: "Forests near rivers and lakes",
+          diet: "Carnivore",
+          average_lifespan: 20,
+          continent: "North America",
+          conservation_status: "Least Concern",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Pithecophaga_jefferyi.jpg/250px-Pithecophaga_jefferyi.jpg",
+        },
+        {
+          id: 5,
+          name: "Panda",
+          scientific_name: "Ailuropoda melanoleuca",
+          habitat: "Bamboo Forests",
+          diet: "Herbivore",
+          average_lifespan: 20,
+          continent: "Asia",
+          conservation_status: "Vulnerable",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/0/0f/Grosser_Panda.JPG",
+        },
+        {
+          id: 6,
+          name: "Seal",
+          scientific_name: "Ommatophoca rossii",
+          habitat: "Tundra",
+          diet: "Omnivore",
+          average_lifespan: 10,
+          continent: "Arctic Regions",
+          conservation_status: "Least Concern",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ommatophoca_rossii_%28Ross_Seal%29%2C_off_Wilkes_Land%2C_Antarctica_1.jpg/250px-Ommatophoca_rossii_%28Ross_Seal%29%2C_off_Wilkes_Land%2C_Antarctica_1.jpg",
+        },
+        {
+          id: 7,
+          name: "Penguin",
+          scientific_name: "Aptenodytes forsteri",
+          habitat: "Antarctic Ice",
+          diet: "Carnivore",
+          average_lifespan: 20,
+          continent: "Antarctica",
+          conservation_status: "Near Threatened",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg/250px-Aptenodytes_forsteri_-Snow_Hill_Island%2C_Antarctica_-adults_and_juvenile-8.jpg",
+        },
+        {
+          id: 8,
+          name: "Kangaroo",
+          scientific_name: "Macropus rufus",
+          habitat: "Desert and Grassland",
+          diet: "Herbivore",
+          average_lifespan: 22,
+          continent: "Australia",
+          conservation_status: "Least Concern",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Kangaroo_Australia_01_11_2008_-_retouch.JPG/250px-Kangaroo_Australia_01_11_2008_-_retouch.JPG",
+        },
+        {
+          id: 9,
+          name: "Turtle",
+          scientific_name: "Chelonia mydas",
+          habitat: "Tropical and Subtropical Oceans",
+          diet: "Herbivore",
+          average_lifespan: 80,
+          continent: "Global (Oceans)",
+          conservation_status: "Endangered",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Turtle_golfina_escobilla_Oaxaca_Mexico_Claudio_Giovenzana_2010.jpg/250px-Turtle_golfina_escobilla_Oaxaca_Mexico_Claudio_Giovenzana_2010.jpg",
+        },
+        {
+          id: 10,
+          name: "Leopard",
+          scientific_name: "Panthera uncia",
+          habitat: "Mountain Ranges",
+          diet: "Carnivore",
+          average_lifespan: 18,
+          continent: "Asia",
+          conservation_status: "Vulnerable",
+          image_url:
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/African_leopard_male_%28cropped%29.jpg/250px-African_leopard_male_%28cropped%29.jpg",
+        },
+      ];
       const container = document.getElementById("animal-container");
       const addAnimalBtn = document.getElementById("addAnimalBtn");
       const animalModal = document.getElementById("animalModal");
@@ -544,41 +666,26 @@
         }
       }
 
-      // Fetch and render animals
-      async function loadAnimals() {
-        container.innerHTML =
-          '<div class="loading">🔄 Loading animals... Please wait</div>';
-        try {
-          const res = await fetch(API_URL);
+      // Load and render animals from static data
+      function loadAnimals() {
+        container.innerHTML = "";
 
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
+        if (ANIMALS_DATA.length === 0) {
+          container.innerHTML =
+            '<div class="loading">📝 No animals found. Add some animals to get started!</div>';
+          return;
+        }
 
-          const data = await res.json();
-
-          if (!data || !Array.isArray(data)) {
-            throw new Error("Invalid data format received");
-          }
-
-          container.innerHTML = "";
-
-          if (data.length === 0) {
-            container.innerHTML =
-              '<div class="loading">📝 No animals found. Add some animals to get started!</div>';
-            return;
-          }
-
-          data.forEach((animal) => {
-            const card = document.createElement("div");
-            card.classList.add("animal-card");
-            card.innerHTML = `
+        ANIMALS_DATA.forEach((animal) => {
+          const card = document.createElement("div");
+          card.classList.add("animal-card");
+          card.innerHTML = `
             <img src="${
               animal.image_url ||
               "https://via.placeholder.com/300x250?text=No+Image"
             }" alt="${
-              animal.name
-            }" onerror="this.src='https://via.placeholder.com/300x250?text=Image+Not+Found'">
+            animal.name
+          }" onerror="this.src='https://via.placeholder.com/300x250?text=Image+Not+Found'">
             <div class="animal-info">
               <strong>${animal.name}</strong><br>
               🌍 <b>Habitat:</b> ${animal.habitat}<br>
@@ -595,20 +702,8 @@
               })">🗑️ Delete</button>
             </div>
           `;
-            container.appendChild(card);
-          });
-        } catch (err) {
-          console.error("Error loading animals:", err);
-          container.innerHTML = `
-            <div class="error-message">
-              ❌ Failed to load animal data.<br>
-              <small>Error: ${err.message}</small><br>
-              <button onclick="loadAnimals()" style="margin-top: 10px; padding: 8px 16px; background: white; color: #e63946; border: none; border-radius: 5px; cursor: pointer;">
-                🔄 Try Again
-              </button>
-            </div>
-          `;
-        }
+          container.appendChild(card);
+        });
       }
 
       // Modal event listeners
@@ -724,7 +819,7 @@
       }
 
       // Add or Edit animal
-      saveAnimalBtn.addEventListener("click", async () => {
+      saveAnimalBtn.addEventListener("click", () => {
         const name = document.getElementById("animalName").value.trim();
         const habitat = document.getElementById("animalHabitat").value.trim();
         const average_lifespan = document
@@ -791,31 +886,21 @@
           saveAnimalBtn.textContent = "💾 Saving...";
           saveAnimalBtn.disabled = true;
 
-          let response;
           if (editMode) {
-            // PUT request
-            response = await fetch(`${API_URL}/${editId}`, {
-              method: "PUT",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(animal),
-            });
+            // Update existing animal
+            const animalIndex = ANIMALS_DATA.findIndex((a) => a.id === editId);
+            if (animalIndex !== -1) {
+              ANIMALS_DATA[animalIndex] = {
+                ...ANIMALS_DATA[animalIndex],
+                ...animal,
+              };
+            }
           } else {
-            // POST request
-            response = await fetch(API_URL, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(animal),
-            });
+            // Add new animal
+            const maxID = Math.max(...ANIMALS_DATA.map((a) => a.id));
+            animal.id = maxID + 1;
+            ANIMALS_DATA.push(animal);
           }
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(
-              errorData.message || `HTTP error! status: ${response.status}`
-            );
-          }
-
-          const result = await response.json();
 
           // Show success message
           const successMsg = editMode
@@ -837,33 +922,25 @@
       });
 
       // Edit animal
-      window.editAnimal = async (id) => {
+      window.editAnimal = (id) => {
         try {
           editMode = true;
           editId = id;
           document.getElementById("modal-title").textContent = "✏️ Edit Animal";
           clearErrorMessages();
 
-          const res = await fetch(`${API_URL}/${id}`);
+          const animal = ANIMALS_DATA.find((a) => a.id === id);
 
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+          if (!animal) {
+            throw new Error("Animal not found");
           }
 
-          const data = await res.json();
-
-          if (!data.success) {
-            throw new Error(data.message || "Failed to fetch animal data");
-          }
-
-          document.getElementById("animalName").value = data.data.name;
-          document.getElementById("animalHabitat").value = data.data.habitat;
+          document.getElementById("animalName").value = animal.name;
+          document.getElementById("animalHabitat").value = animal.habitat;
           document.getElementById("animalLifespan").value =
-            data.data.average_lifespan;
-          document.getElementById("animalContinent").value =
-            data.data.continent;
-          document.getElementById("animalImage").value =
-            data.data.image_url || "";
+            animal.average_lifespan;
+          document.getElementById("animalContinent").value = animal.continent;
+          document.getElementById("animalImage").value = animal.image_url || "";
 
           animalModal.style.display = "block";
         } catch (error) {
@@ -873,36 +950,27 @@
       };
 
       // Delete animal
-      window.deleteAnimal = async (id) => {
+      window.deleteAnimal = (id) => {
         deleteId = id;
         deleteModal.style.display = "block";
       };
 
       // Confirm delete
-      confirmDeleteBtn.addEventListener("click", async () => {
+      confirmDeleteBtn.addEventListener("click", () => {
         if (!deleteId) return;
 
         try {
-          const res = await fetch(`${API_URL}/${deleteId}`, {
-            method: "DELETE",
-          });
+          const animalIndex = ANIMALS_DATA.findIndex((a) => a.id === deleteId);
 
-          if (!res.ok) {
-            const errorData = await res.json();
-            throw new Error(
-              errorData.message || `HTTP error! status: ${res.status}`
-            );
+          if (animalIndex === -1) {
+            throw new Error("Animal not found");
           }
 
-          const result = await res.json();
+          ANIMALS_DATA.splice(animalIndex, 1);
 
-          if (result.success) {
-            alert("Animal deleted successfully! 🗑️");
-            closeDeleteModal();
-            loadAnimals();
-          } else {
-            throw new Error(result.message || "Failed to delete animal");
-          }
+          alert("Animal deleted successfully! 🗑️");
+          closeDeleteModal();
+          loadAnimals();
         } catch (error) {
           console.error("Error deleting animal:", error);
           alert(`Error deleting animal: ${error.message}`);
